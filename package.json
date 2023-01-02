@@ -1,0 +1,20 @@
+{
+  "name": "car-rental-sever",
+  "version": "1.0.0",
+  "description": "car rental back end",
+  "main": "server.js",
+  "scripts": {
+    "test": "run"
+  },
+  "author": "dheerajcjustin",
+  "license": "ISC",
+  "dependencies": {
+    "bcrypt": "^5.1.0",
+    "cors": "^2.8.5",
+    "dotenv": "^16.0.3",
+    "express": "^4.18.2",
+    "mongoose": "^6.8.2",
+    "morgan": "^1.10.0",
+    "path": "^0.12.7"
+  }
+}
