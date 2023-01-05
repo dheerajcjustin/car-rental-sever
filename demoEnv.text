@@ -1,0 +1,11 @@
+port=5000
+screat=wow
+mongo="mongodb://localhost:27017/car-rental"
+jwtSecret="ennemyre"
+
+
+
+## These are your accountSid and authToken from https://www.twilio.com/console
+below is an example
+TWILIO_ACCOUNT_SID="AC8f7715780bb85421c1ad4d41e4b6bb12"
+TWILIO_AUTH_TOKEN="1ba10a6e849ad72338bdc7dfbd06e75b"

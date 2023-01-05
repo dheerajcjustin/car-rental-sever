@@ -7,10 +7,10 @@ const schema = mongoose.Schema;
 
 const userSchema = new schema(
   {
-    email: { type: String, required: true },
+    email: { type: String, required: true, trim: true },
     googleId: { type: Number },
     name: { type: String, required: true },
-    mobile: { type: Number },
+    mobile: { type: Number, trim: true },
     emailVerified: { type: Boolean },
     password: { type: String, trim: true },
     profilePic: { type: String },
@@ -33,7 +33,6 @@ function validateUser(user) {
       .max(10)
       .required(),
   });
-  console.log(user);
   let result = schema.validate(user);
   //   if (!result["error"]) result = validatePassword(user.password);
 
