@@ -9,3 +9,4 @@ jwtSecret="ennemyre"
 below is an example
 TWILIO_ACCOUNT_SID="AC8f7715780bb85421c1ad4d41e4b6bb12"
 TWILIO_AUTH_TOKEN="1ba10a6e849ad72338bdc7dfbd06e75b"
+TWILIO_AUTH_SERVICE_SID="VA73095a40hmyfttyecbde5c6f268e07bd"
