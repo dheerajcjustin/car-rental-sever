@@ -46,7 +46,11 @@ const otpVerify = (req, res) => {
   console.log("hai req.body is  otp verigy ", req.body);
   const response = otpVerifyFunction(req.body.otp, req.body.mobile);
   console.log("response of otp", response);
-  res.json(response);
+  if (response.status === true) {
+    res.status(201).json({ message: "otp verification successful" });
+  } else {
+    res.status(202).json({ message: "otp verification failed" });
+  }
 };
 exports.otpVerify = otpVerify;
 
@@ -67,6 +71,33 @@ const loginWithEmail = async (req, res) => {
 };
 exports.loginWithEmail = loginWithEmail;
 
+const forgotPassword = async (req, res) => {
+  const user = await User.findOne({ mobile: req.body.mobile });
+  if (user) {
+    await sendOtp(mobile);
+    const accessToken = await JWT.sign(
+      { name: user.name, email: user.email, userId: user._id },
+      "paratuladapatti"
+    );
+    res.status(201).json({ message: `otp send successfully at ${mobile}` });
+  } else {
+    res
+      .status(202)
+      .json({ message: `there is no user with mobile number${mobile}` });
+  }
+};
+
+const forgotPasswordPost = async (req, res) => {
+  const password = req.body.password;
+  if (password < 8) {
+    res.status(202).json({ message: "password must more than 8 character" });
+  } else {
+    try {
+      await User.updateOne();
+    } catch (error) {}
+  }
+};
+
 function sendOtp(mobile) {
   mobile = Number(mobile);
   client.verify.v2
@@ -85,6 +116,10 @@ function otpVerifyFunction(otp, mobile) {
     .verificationChecks.create({ to: `+91${mobile}`, code: otp })
     .then((verification_check) => {
       console.log("verifcation ckeck otp  ", verification_check.status);
-      return verification_check.status;
+      if (verification_check.status == "approved") {
+        return { status: true };
+      } else {
+        return { status: false };
+      }
     });
 }
