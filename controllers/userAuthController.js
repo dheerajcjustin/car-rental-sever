@@ -42,9 +42,9 @@ const signupWithEmail = async (req, res) => {
 };
 exports.signupWithEmail = signupWithEmail;
 
-const otpVerify = (req, res) => {
+const otpVerify = async (req, res) => {
   console.log("hai req.body is  otp verigy ", req.body);
-  const response = otpVerifyFunction(req.body.otp, req.body.mobile);
+  const response = await otpVerifyFunction(req.body.otp, req.body.mobile);
   console.log("response of otp", response);
   if (response.status === true) {
     res.status(201).json({ message: "otp verification successful" });
@@ -110,16 +110,14 @@ function sendOtp(mobile) {
     });
 }
 
-function otpVerifyFunction(otp, mobile) {
-  client.verify.v2
+async function otpVerifyFunction(otp, mobile) {
+  const verification_check = await client.verify.v2
     .services(serviceSid)
-    .verificationChecks.create({ to: `+91${mobile}`, code: otp })
-    .then((verification_check) => {
-      console.log("verifcation ckeck otp  ", verification_check.status);
-      if (verification_check.status == "approved") {
-        return { status: true };
-      } else {
-        return { status: false };
-      }
-    });
+    .verificationChecks.create({ to: `+91${mobile}`, code: otp });
+  console.log("verifcation ckeck otp  ", verification_check.status);
+  if (verification_check.status == "approved") {
+    return { status: true };
+  } else {
+    return { status: false };
+  }
 }
