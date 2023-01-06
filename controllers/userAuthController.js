@@ -11,7 +11,12 @@ const client = require("twilio")(accountSid, authToken);
 
 const signupWithEmail = async (req, res) => {
   const userExits = await User.findOne({
-    $or: [{ email: req.body.email }, { mobile: req.body.mobile }],
+    $and: [
+      {
+        $or: [{ email: req.body.email }, { mobile: req.body.mobile }],
+      },
+      { verified: true },
+    ],
   });
   if (userExits) {
     res
