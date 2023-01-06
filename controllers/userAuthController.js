@@ -60,8 +60,19 @@ const otpVerify = async (req, res) => {
     const response = await otpVerifyFunction(otp, mobile);
     console.log("response of otp", response);
     if (response.status === true) {
+      const accessToken = await JWT.sign(
+        {
+          name: user.name,
+          email: user.email,
+          userId: user._id,
+          mobile: user.mobile,
+        },
+        "paratuladapatti"
+      );
       await User.updateOne({ mobile }, { verified: true });
-      res.status(201).json({ message: "otp verification successful" });
+      res
+        .status(201)
+        .json({ message: "otp verification successful", accessToken });
     } else {
       res.status(400).json({ message: " invalid otp verification " });
     }
