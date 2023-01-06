@@ -30,10 +30,17 @@ const signupWithEmail = async (req, res) => {
     try {
       await user.save();
       const response = await sendOtp(req.body.mobile);
-      res.status(201).json({
-        message: `successfully signup  and `,
-        otpStatus: `sending to${req.body.mobile} `,
-      });
+      if (response.status === true) {
+        res.status(201).json({
+          message: `successfully signup  and `,
+          otpStatus: `sending to${req.body.mobile} `,
+        });
+      } else {
+        res.status(400).json({
+          message: `twlio error or sever down  `,
+          otpStatus: `sending to${req.body.mobile} `,
+        });
+      }
     } catch (error) {
       console.log(error);
       res.status(400).json({ message: "some went wrong  ", error });
@@ -116,9 +123,16 @@ const forgotPasswordPost = async (req, res) => {
 
 async function sendOtp(mobile) {
   mobile = Number(mobile);
-  const verification = await client.verify.v2
-    .services(serviceSid)
-    .verifications.create({ to: `+91${mobile}`, channel: "sms" });
+
+  try {
+    const verification = await client.verify.v2
+      .services(serviceSid)
+      .verifications.create({ to: `+91${mobile}`, channel: "sms" });
+    return { status: true, verification };
+  } catch (error) {
+    return { status: false, error };
+  }
+
   // .then((verification) => {
   //   console.log("verification chek send opt", verification_check.status);
 
