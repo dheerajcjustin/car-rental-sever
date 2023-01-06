@@ -2,6 +2,7 @@ const { User } = require("../models/userModel");
 const JWT = require("jsonwebtoken");
 const mongoose = require("mongoose");
 const bcrypt = require("bcrypt");
+const { response } = require("express");
 const accountSid = process.env.TWILIO_ACCOUNT_SID;
 const authToken = process.env.TWILIO_AUTH_TOKEN;
 const serviceSid = process.env.TWILIO_AUTH_SERVICE_SID;
@@ -28,10 +29,10 @@ const signupWithEmail = async (req, res) => {
     });
     try {
       await user.save();
-
-      sendOtp(req.body.mobile);
+      const response = await sendOtp(req.body.mobile);
       res.status(201).json({
-        message: `successfully signup  and otp is sent to${req.body.mobile}`,
+        message: `successfully signup  and `,
+        otpStatus: `sending to${req.body.mobile} `,
       });
     } catch (error) {
       console.log(error);
@@ -42,14 +43,19 @@ const signupWithEmail = async (req, res) => {
 exports.signupWithEmail = signupWithEmail;
 
 const otpVerify = async (req, res) => {
-  console.log("hai req.body is  otp verigy ", req.body);
-  const response = await otpVerifyFunction(req.body.otp, req.body.mobile);
-  console.log("response of otp", response);
-  if (response.status === true) {
-    User.updateOne({ mobile }, { verified: true });
-    res.status(201).json({ message: "otp verification successful" });
-  } else {
-    res.status(202).json({ message: "otp verification failed" });
+  try {
+    const { mobile, otp } = req.body;
+    const response = await otpVerifyFunction(otp, mobile);
+    console.log("response of otp", response);
+    if (response.status === true) {
+      await User.updateOne({ mobile }, { verified: true });
+      res.status(201).json({ message: "otp verification successful" });
+    } else {
+      res.status(400).json({ message: " invalid otp verification " });
+    }
+  } catch (error) {
+    console.log(error);
+    res.status(400).json({ message: "otp failed", error: error.massage });
   }
 };
 exports.otpVerify = otpVerify;
@@ -79,7 +85,7 @@ exports.loginWithEmail = loginWithEmail;
 const forgotPassword = async (req, res) => {
   const user = await User.findOne({ mobile: req.body.mobile });
   if (user) {
-    await sendOtp(mobile);
+    const response = await sendOtp(mobile);
     const accessToken = await JWT.sign(
       {
         name: user.name,
@@ -108,16 +114,18 @@ const forgotPasswordPost = async (req, res) => {
   }
 };
 
-function sendOtp(mobile) {
+async function sendOtp(mobile) {
   mobile = Number(mobile);
-  client.verify.v2
+  const verification = await client.verify.v2
     .services(serviceSid)
-    .verifications.create({ to: `+91${mobile}`, channel: "sms" })
-    .then((verification) => {
-      console.log("verification chek send opt", verification_check.status);
+    .verifications.create({ to: `+91${mobile}`, channel: "sms" });
+  // .then((verification) => {
+  //   console.log("verification chek send opt", verification_check.status);
 
-      return verification.status;
-    });
+  //   return verification.status;
+  // });
+  console.log("verification", verification);
+  return { status: verification.status };
 }
 
 async function otpVerifyFunction(otp, mobile) {
