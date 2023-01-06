@@ -11,7 +11,7 @@ const userSchema = new schema(
     googleId: { type: Number },
     name: { type: String, required: true },
     mobile: { type: Number, trim: true },
-    emailVerified: { type: Boolean },
+    verified: { type: Boolean },
     password: { type: String, trim: true },
     profilePic: { type: String },
   },

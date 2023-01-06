@@ -24,16 +24,15 @@ const signupWithEmail = async (req, res) => {
       email: req.body.email,
       mobile: req.body.mobile,
       password: hash,
+      verified: false,
     });
     try {
       await user.save();
 
-      const accessToken = await JWT.sign(
-        { name: req.body.name, email: req.body.email, userId: user._id },
-        "paratuladapatti"
-      );
       sendOtp(req.body.mobile);
-      res.status(201).json({ message: "successfully signup ", accessToken });
+      res.status(201).json({
+        message: `successfully signup  and otp is sent to${req.body.mobile}`,
+      });
     } catch (error) {
       console.log(error);
       res.status(400).json({ message: "some went wrong  ", error });
@@ -47,6 +46,7 @@ const otpVerify = async (req, res) => {
   const response = await otpVerifyFunction(req.body.otp, req.body.mobile);
   console.log("response of otp", response);
   if (response.status === true) {
+    User.updateOne({ mobile }, { verified: true });
     res.status(201).json({ message: "otp verification successful" });
   } else {
     res.status(202).json({ message: "otp verification failed" });
@@ -55,19 +55,24 @@ const otpVerify = async (req, res) => {
 exports.otpVerify = otpVerify;
 
 const loginWithEmail = async (req, res) => {
-  const { email, password } = req.body;
-  const user = await User.findOne({ email });
+  const { mobile, password } = req.body;
+  const user = await User.findOne({ mobile });
   if (user) {
     const validPass = await bcrypt.compare(password, user.password);
     if (validPass) {
       const accessToken = await JWT.sign(
-        { name: user.name, email: user.email, userId: user._id },
+        {
+          name: user.name,
+          email: user.email,
+          userId: user._id,
+          mobile: user.mobile,
+        },
         "paratuladapatti"
       );
       return res.status(201).json({ message: "login successful", accessToken });
     }
   }
-  res.status(202).json({ massage: "invalid user name of password" });
+  res.status(400).json({ massage: "invalid user name of password" });
 };
 exports.loginWithEmail = loginWithEmail;
 
@@ -76,7 +81,12 @@ const forgotPassword = async (req, res) => {
   if (user) {
     await sendOtp(mobile);
     const accessToken = await JWT.sign(
-      { name: user.name, email: user.email, userId: user._id },
+      {
+        name: user.name,
+        email: user.email,
+        userId: user._id,
+        mobile: user.mobile,
+      },
       "paratuladapatti"
     );
     res.status(201).json({ message: `otp send successfully at ${mobile}` });
