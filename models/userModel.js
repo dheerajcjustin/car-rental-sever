@@ -22,7 +22,7 @@ function validateUser(user) {
   const schema = Joi.object({
     name: Joi.string()
       .regex(/^[a-zA-Z0-9 ,.'-]+$/)
-      .min(5)
+      .min(3)
       .max(50)
       .required(),
     email: Joi.string().email().min(5).max(255).required(),

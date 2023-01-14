@@ -6,14 +6,18 @@ const mongoose = require("mongoose");
 const server = express();
 const dbConnect = require("./config/mongoose");
 const authRoutes = require("./routes/authRoutes");
+const homeRoutes = require("./routes/homeRoutes");
+const corsOptions = require("./config/corsOption");
+const credentials = require("./middleware/credentials");
 
+server.use(credentials);
 server.use(express.json());
 server.use(express.urlencoded({ extended: true }));
-server.use(cors());
+server.use(cors(corsOptions));
 dbConnect();
 
+server.use("/", homeRoutes);
 server.use("/auth", authRoutes);
-
 server.use("*", (req, res) => {
   res.status(404).json("welcome to car rental api and you have invalid path");
 });
