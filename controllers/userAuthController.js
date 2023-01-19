@@ -1,4 +1,4 @@
-const { User } = require("../models/userModel");
+const { User, validate } = require("../models/userModel");
 const Token = require("../models/tokenModel");
 const JWT = require("jsonwebtoken");
 const mongoose = require("mongoose");
@@ -13,6 +13,7 @@ const client = require("twilio")(accountSid, authToken);
 // const verifySid = "VA7ef903c2bf7c1b4b3adfc21cf48fd7a7";
 
 const signupWithEmail = async (req, res) => {
+  validate(req.body);
   const userExits = await User.findOne({
     $and: [
       {
@@ -77,15 +78,20 @@ const otpVerify = async (req, res) => {
         tokenData,
         process.env.ACCESS_TOKEN_SECRET
       );
-      res
-        .status(201)
-        .json({ message: "otp verification successful", accessToken, user });
+      return res.status(201).json({
+        message: "otp successful",
+        accessToken,
+        user,
+        userType: "user",
+      });
     } else {
       res.status(400).json({ message: " invalid otp verification " });
     }
   } catch (error) {
     console.log(error);
-    res.status(400).json({ message: "otp failed", error: error.massage });
+    res
+      .status(500)
+      .json({ message: "server error failed", error: error.massage });
   }
 };
 exports.otpVerify = otpVerify;
@@ -124,9 +130,12 @@ const loginWithEmail = async (req, res) => {
           process.env.ACCESS_TOKEN_SECRET
         );
         console.log("login succes fuls ");
-        return res
-          .status(201)
-          .json({ message: "login successful", accessToken, user });
+        return res.status(201).json({
+          message: "login successful",
+          accessToken,
+          user,
+          userType: "user",
+        });
       }
     }
     console.log("invalid password or username");
@@ -142,6 +151,7 @@ const loginWithEmail = async (req, res) => {
 exports.loginWithEmail = loginWithEmail;
 
 const forgotPassword = async (req, res) => {
+  const { mobile } = req.body;
   try {
     const user = await User.findOne({
       mobile: req.body.mobile,
@@ -151,6 +161,37 @@ const forgotPassword = async (req, res) => {
       console.log("the user need to be forgot password", user);
       const response = await sendOtp(mobile);
       if (response.status === true) {
+        res
+          .status(201)
+          .json(`otp send successfully at to change password ${mobile}`);
+      } else {
+        res
+          .status(500)
+          .json(
+            `otp failed for network error   at ${mobile} contact developer`
+          );
+      }
+    } else {
+      res.status(400).json(`there is no user with mobile number${mobile}`);
+    }
+  } catch (error) {
+    console.log(error);
+    res.status(500).json("server addichu poy, call the developer");
+  }
+};
+exports.forgotPassword = forgotPassword;
+
+const ChangePasswordOtp = async (req, res) => {
+  try {
+    const { mobile, otp } = req.body;
+    const response = await otpVerifyFunction(otp, mobile);
+    console.log("response of otp", response);
+    if (response.status === true) {
+      const user = await User.findOne({
+        mobile: req.body.mobile,
+        verified: true,
+      });
+      if (user) {
         let passwordToken = await Token.findOne({ userId: user._id });
         if (!passwordToken) {
           passwordToken = await new Token({
@@ -158,47 +199,52 @@ const forgotPassword = async (req, res) => {
             token: crypto.randomBytes(32).toString("hex"),
           }).save();
         }
-      } else {
-        res.status(406).json({
-          message: `otp failed for  at ${mobile} contact developer`,
+        res.status(201).json({
+          message: "token and userId  for password change send successfull   ",
+          passwordToken: passwordToken.token,
+          userId: passwordToken.userId,
         });
+      } else {
+        res.status(400).json("invalid mobile");
       }
-      res.status(201).json({
-        message: `otp send successfully at ${mobile}`,
-        passwordToken: passwordToken.token,
-        userId: passwordToken.userId,
-      });
     } else {
-      res
-        .status(400)
-        .json({ message: `there is no user with mobile number${mobile}` });
+      res.status(400).json("invalid otp");
     }
   } catch (error) {
-    res.status(500).json("server addichu poy, call the developer");
+    console.error(error);
+    res.status(500).json("server addichr poy");
   }
 };
-exports.forgotPassword = forgotPassword;
+exports.ChangePasswordOtp = ChangePasswordOtp;
 
 const changePassword = async (req, res) => {
   try {
-    const schema = Joi.object({ password: Joi.string().required() });
+    const schema = Joi.object({
+      password: Joi.string().required(),
+      userId: Joi.string().required(),
+      passwordToken: Joi.string().required(),
+    });
     const { error } = schema.validate(req.body);
     if (error) return res.status(400).send(error.details[0].message);
-    const { password, userId, token } = req.body;
-    const user = await User.findById(req.params.userId);
+    const { password, userId, passwordToken } = req.body;
+    console.log(password);
+    console.log(userId);
+    console.log(passwordToken);
+
+    const user = await User.findById(userId);
     if (!user)
       return res
         .status(400)
         .send("invalid at userId,  is no user with that userId or expired");
-
-    const passwordToken = await Token.findOne({
+    const token = await Token.findOne({
       userId: userId,
-      token: token,
+      token: passwordToken,
     });
     if (!token) return res.status(400).send("Invalid link or expired");
-    user.password = password;
+    const hash = await bcrypt.hash(password, 5);
+    user.password = hash;
     await user.save();
-    await passwordToken.delete();
+    // await passwordToken.delete();
     res.status(201).json("password changed successfully");
   } catch (error) {
     console.error(error);
@@ -207,9 +253,8 @@ const changePassword = async (req, res) => {
 };
 exports.changePassword = changePassword;
 async function sendOtp(mobile) {
-  mobile = Number(mobile);
-
   try {
+    mobile = Number(mobile);
     const verification = await client.verify.v2
       .services(serviceSid)
       .verifications.create({ to: `+91${mobile}`, channel: "sms" });
@@ -220,10 +265,12 @@ async function sendOtp(mobile) {
 }
 
 async function otpVerifyFunction(otp, mobile) {
+  mobile = Number(mobile);
   const verification_check = await client.verify.v2
     .services(serviceSid)
     .verificationChecks.create({ to: `+91${mobile}`, code: otp });
   console.log("verifcation ckeck otp  ", verification_check.status);
+  console.log(verification_check);
   if (verification_check.status == "approved") {
     return { status: true };
   } else {

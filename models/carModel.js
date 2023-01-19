@@ -8,10 +8,10 @@ const schema = mongoose.Schema;
 
 const carSchema = new schema(
   {
+    vendor: { type: mongoose.Types.ObjectId },
     name: { type: String, required: true, trim: true },
     price: { type: Number },
-    millage: { type: String },
-    gearType: { type: Number, trim: true },
+    rcNumber: { type: Number },
     availableStart: { type: String },
     availableEnd: { type: String },
     bookingStart_date: { type: String },
@@ -19,6 +19,7 @@ const carSchema = new schema(
     bookingStart_time: { type: String },
     bookingEnd_time: { type: String },
     isActive: { type: Boolean },
+    phots: [{ type: String }],
   },
   { timestamps: true }
 );

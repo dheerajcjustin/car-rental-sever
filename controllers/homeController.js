@@ -1,3 +1,5 @@
+const { Location } = require("../models/locationModel");
+
 const search = async (req, res) => {
   console.log(req.query);
   if (!req.query.location && !req.query.pickupDate && !req.query.dropOffDate) {
@@ -27,3 +29,13 @@ const search = async (req, res) => {
   }
 };
 exports.search = search;
+
+const home = async (req, res) => {
+  try {
+    const locations = await Location.find().select(
+      "location description image pickupPoints"
+    );
+    res.status(201).json(locations);
+  } catch (error) {}
+};
+exports.home = home;

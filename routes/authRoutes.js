@@ -6,6 +6,7 @@ const {
   otpVerify,
   changePassword,
   forgotPassword,
+  ChangePasswordOtp,
 } = require("../controllers/userAuthController");
 const validateReqBody = require("../middleware/validateReqBody");
 // const { verifyToken } = require("../helpers/authJwt");
@@ -22,11 +23,17 @@ router.post("/loginEmail", loginWithEmail);
 //body mobile and otp
 router.post("/otpVerify", otpVerify);
 
-// body mobile number user need to be changed
-//result will have passwordToken and userId both are need change the password
+// body mobile
+// otp will sent to user phone ,and save mobile number for checking
 router.post("/forgotPassword", forgotPassword);
 
-//body passwordToken  and userId and the newPassword
+//  body (otp,mobile)
+///result (201) will be the (userId , passwordToken) both need to change password
+// 400 invalid otp or mobile
+// 500 call the develeper server addichu poy
+router.post("/ChangePasswordOtp", ChangePasswordOtp);
+
+//body userId , PasswordToken, password(the new password)
 router.post("/changePassword", changePassword);
 
 module.exports = router;
