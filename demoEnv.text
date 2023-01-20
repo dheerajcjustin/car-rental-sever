@@ -4,6 +4,8 @@ mongo="mongodb://localhost:27017/car-rental"
 jwtSecret="ennemyre"
 
 
+ACCESS_TOKEN_SECRET="nokkandaUnniIthuNjanAlla"
+
 
 ## These are your accountSid and authToken from https://www.twilio.com/console
 below is an example

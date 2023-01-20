@@ -12,6 +12,7 @@ const vendorSchema = new schema(
     verified: { type: Boolean },
     password: { type: String, trim: true },
     profilePic: { type: String },
+    cars: [{ type: mongoose.Types.ObjectId }],
   },
   { timestamps: true }
 );
