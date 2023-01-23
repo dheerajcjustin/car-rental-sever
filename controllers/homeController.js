@@ -3,11 +3,20 @@ const { Car } = require("../models/carModel");
 
 const search = async (req, res) => {
   try {
-    const { location, pickupDate, dropOffDate } = req.body;
+    const filters = req.query;
+    const { locationId, pickupDate, dropOffDate, pickupTime, dropOffTime } =
+      req.query;
+
+    console.log(filters);
+    // const { location, pickupDate, dropOffDate } = req.body;
     if (!location || !pickupDate || !dropOffDate)
       return res
         .status(400)
-        .json("location (id ) pickupDate droopOffDate are required");
+        .json({
+          message: "location (id ) pickupDate droopOffDate are required",
+          example:
+            "/search?pickupDate=${searchOptions.pickupDate}&pickupTime=${searchOptions.pickupTime}&dropOffDate=${searchOptions.dropOffDate}&dropOffTime=${searchOptions.dropOffTime} &locationId=${locationId}",
+        });
     const cars = await Car.find();
     res.status(201).json(cars);
   } catch (error) {
@@ -23,7 +32,7 @@ const home = async (req, res) => {
       "location description image pickupPoints"
     );
     const topPicks = await Car.find();
-    res.status(201).json(locations, topPicks);
+    res.status(201).json({ locations, topPicks });
   } catch (error) {}
 };
 exports.home = home;

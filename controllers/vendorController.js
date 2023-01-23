@@ -20,7 +20,7 @@ const addCar = async (req, res) => {
       location: carData.location,
       price: carData.price,
       rcNumber: carData.rcNumber,
-      verified: false,
+      verified: "pending",
       phots: url,
       vendor: req.user,
       availableTime,

@@ -7,6 +7,7 @@ const {
   changePassword,
   forgotPassword,
   ChangePasswordOtp,
+  resendOtp,
 } = require("../controllers/userAuthController");
 const validateReqBody = require("../middleware/validateReqBody");
 // const { verifyToken } = require("../helpers/authJwt");
@@ -35,5 +36,6 @@ router.post("/ChangePasswordOtp", ChangePasswordOtp);
 
 //body userId , PasswordToken, password(the new password)
 router.post("/changePassword", changePassword);
+router.post("/resendOtp", resendOtp);
 
 module.exports = router;

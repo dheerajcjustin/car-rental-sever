@@ -19,7 +19,7 @@ const signupWithEmail = async (req, res) => {
       { verified: true },
     ],
   });
-  if (userExits) {
+  if (userExits?.name) {
     res
       .status(409)
       .json({ message: "email,or mobile  already excites, signup failed" });
@@ -249,3 +249,27 @@ const changePassword = async (req, res) => {
   }
 };
 exports.changePassword = changePassword;
+
+const resendOtp = async (req, res) => {
+  console.log(req.body);
+  try {
+    const { mobile } = req.body;
+    const response = await sendOtp(mobile);
+
+    if (response.status === true) {
+      res.status(201).json({
+        message: `success`,
+        otpStatus: `sending to${mobile} `,
+      });
+    } else {
+      res.status(400).json({
+        message: `error`,
+        otpStatus: `sending to${mobile} `,
+      });
+    }
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({ message: "error", error });
+  }
+};
+exports.resendOtp = resendOtp;

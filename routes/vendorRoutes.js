@@ -4,6 +4,9 @@ const {
   loginVendor,
   signupVendor,
   otpVerify,
+  ChangePasswordOtp,
+  changePassword,
+  forgotPassword,
 } = require("../controllers/vendorAuth");
 const { addCar } = require("../controllers/vendorController");
 const { verifyJWT } = require("../middleware/authJwt");
@@ -13,4 +16,8 @@ router.post("/login", loginVendor);
 router.post("/signup", signupVendor);
 router.post("/otpVerify", otpVerify);
 router.post("/addCar", verifyJWT, vendorAuth, addCar);
+router.post("/forgotPassword", forgotPassword);
+router.post("/changePassword", changePassword);
+router.post("/ChangePasswordOtp", ChangePasswordOtp);
+
 module.exports = router;

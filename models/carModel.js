@@ -23,7 +23,7 @@ const carSchema = new schema(
     // bookingStart_time: { type: String },
     // bookingEnd_time: { type: String },
     isActive: { type: Boolean },
-    verified: { type: Boolean },
+    verified: { type: String, enum: ["pending", "rejected", "verified"] },
 
     phots: [{ type: String }],
   },

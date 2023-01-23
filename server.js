@@ -11,13 +11,14 @@ const adminRoutes = require("./routes/adminRoutes");
 const corsOptions = require("./config/corsOption");
 const credentials = require("./middleware/credentials");
 const vendorRoutes = require("./routes/vendorRoutes");
+const morgan = require("morgan");
 
 server.use(credentials);
 server.use(express.json());
 server.use(express.urlencoded({ extended: true }));
 server.use(cors(corsOptions));
 dbConnect();
-
+server.use(morgan("dev"));
 server.use("/", homeRoutes);
 server.use("/auth", authRoutes);
 server.use("/vendor", vendorRoutes);
