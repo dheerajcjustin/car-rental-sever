@@ -7,7 +7,6 @@ const schema = mongoose.Schema;
 
 const userSchema = new schema(
   {
-    email: { type: String, required: true, trim: true },
     googleId: { type: Number },
     name: { type: String, required: true },
     mobile: { type: Number, trim: true },
@@ -25,7 +24,7 @@ function validateUser(user) {
       .min(3)
       .max(50)
       .required(),
-    email: Joi.string().email().min(5).max(255).required(),
+
     password: Joi.string().min(8).max(255).required(),
     mobile: Joi.string()
       .regex(/^[0-9]+$/)

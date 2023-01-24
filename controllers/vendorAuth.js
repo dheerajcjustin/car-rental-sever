@@ -36,14 +36,14 @@ const signupVendor = async (req, res) => {
           otpStatus: `sending to ${req.body.mobile} `,
         });
       } else {
-        res.status(400).json({
+        res.status(503).json({
           message: `twlio error or sever down  `,
           otpStatus: `sending to${req.body.mobile} `,
         });
       }
     } catch (error) {
       console.log(error);
-      res.status(400).json({ message: "some went wrong  ", error });
+      res.status(500).json({ message: "some went wrong  ", error });
     }
   }
 };

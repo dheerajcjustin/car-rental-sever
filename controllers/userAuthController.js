@@ -12,23 +12,17 @@ const { otpVerifyFunction, sendOtp } = require("../utils/Otp");
 const signupWithEmail = async (req, res) => {
   validate(req.body);
   const userExits = await User.findOne({
-    $and: [
-      {
-        $or: [{ email: req.body.email }, { mobile: req.body.mobile }],
-      },
-      { verified: true },
-    ],
+    $and: [{ mobile: req.body.mobile }, { verified: true }],
   });
   if (userExits?.name) {
     res
       .status(409)
-      .json({ message: "email,or mobile  already excites, signup failed" });
+      .json({ message: " mobile  already excites, signup failed" });
   } else {
     const hash = await bcrypt.hash(req.body.password, 5);
 
     const user = new User({
       name: req.body.name,
-      email: req.body.email,
       mobile: req.body.mobile,
       password: hash,
       verified: false,
@@ -66,7 +60,6 @@ const otpVerify = async (req, res) => {
         role: "user",
         userData: {
           name: user.name,
-          email: user.email,
           userId: user._id,
           mobile: user.mobile,
         },
@@ -112,7 +105,6 @@ const loginWithEmail = async (req, res) => {
         role: "user",
         userData: {
           name: user.name,
-          email: user.email,
           userId: user._id,
           mobile: user.mobile,
         },

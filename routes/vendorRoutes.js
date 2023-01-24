@@ -8,7 +8,7 @@ const {
   changePassword,
   forgotPassword,
 } = require("../controllers/vendorAuth");
-const { addCar } = require("../controllers/vendorController");
+const { addCar, myCars } = require("../controllers/vendorController");
 const { verifyJWT } = require("../middleware/authJwt");
 const { vendorAuth } = require("../middleware/vendorAuth");
 
@@ -19,5 +19,6 @@ router.post("/addCar", verifyJWT, vendorAuth, addCar);
 router.post("/forgotPassword", forgotPassword);
 router.post("/changePassword", changePassword);
 router.post("/ChangePasswordOtp", ChangePasswordOtp);
+router.get("/myCars", verifyJWT, vendorAuth, myCars);
 
 module.exports = router;

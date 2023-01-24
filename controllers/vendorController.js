@@ -37,3 +37,25 @@ const addCar = async (req, res) => {
 };
 
 exports.addCar = addCar;
+const myCars = async (req, res) => {
+  console.log("wowow inside the add car ");
+  console.log(req.user);
+  console.log("the roele is ", req.user);
+  let cars = await Vendor.aggregate([
+    { $unwind: "$cars" },
+    {
+      $lookup: {
+        from: "cars",
+        localField: "cars",
+        foreignField: "_id",
+
+        as: "vendorCars",
+      },
+    },
+  ]);
+  console.log(cars[0].vendorCars);
+  cats = JSON.stringify(cars.vendorCars);
+
+  res.status(201).json(`the user is ${cars}`);
+};
+exports.myCars = myCars;
