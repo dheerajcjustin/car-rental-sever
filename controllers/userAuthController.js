@@ -43,7 +43,7 @@ const signupWithEmail = async (req, res) => {
       }
     } catch (error) {
       console.log(error);
-      res.status(400).json({ message: "some went wrong  ", error });
+      res.status(500).json({ message: "some went wrong  " });
     }
   }
 };
@@ -96,8 +96,10 @@ const loginWithEmail = async (req, res) => {
   try {
     console.log("checking the user ");
 
-    const user = await User.findOne({ mobile });
-    if (user) {
+    const user = await User.findOne({
+      $and: [{ mobile: req.body.mobile }, { verified: true }],
+    });
+    if (user.name) {
       console.log();
       console.log("uer is  found ", user);
       const validPass = await bcrypt.compare(password, user.password);

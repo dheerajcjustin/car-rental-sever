@@ -8,6 +8,8 @@ const schema = mongoose.Schema;
 
 const carSchema = new schema(
   {
+    gearType: { type: String, enum: ["auto", "manual"] },
+    fuelType: { type: String, enum: ["petrol", "diesel"] },
     seatNum: { type: Number },
     location: { type: mongoose.Types.ObjectId },
     pickup: [{ type: mongoose.Types.ObjectId }],
@@ -18,6 +20,7 @@ const carSchema = new schema(
     availableStart: { type: String },
     availableEnd: { type: String },
     availableTime: [{ type: Date }],
+    bookedTime: [{ type: Date }],
     // bookingStart_date: { type: String },
     // bookingEnd_date: { type: String },
     // bookingStart_time: { type: String },
