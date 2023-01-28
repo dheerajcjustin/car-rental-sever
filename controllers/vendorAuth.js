@@ -165,7 +165,7 @@ const forgotPassword = async (req, res) => {
     }
   } catch (error) {
     console.log(error);
-    res.status(500).json("server addichu poy, call the developer");
+    res.status(500);
   }
 };
 exports.forgotPassword = forgotPassword;

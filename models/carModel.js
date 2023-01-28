@@ -20,7 +20,7 @@ const carSchema = new schema(
     availableStart: { type: String },
     availableEnd: { type: String },
     availableTime: [{ type: Date }],
-    bookedTime: [{ type: Date }],
+    bookedTime: [{ type: String }],
     // bookingStart_date: { type: String },
     // bookingEnd_date: { type: String },
     // bookingStart_time: { type: String },

@@ -1,5 +1,6 @@
 const TimeCombiner = (date, time) => {
   console.log("date and time ");
+  time = time.trim();
   console.log(date, time);
   const timeArray = [
     "10.00 AM",
@@ -9,11 +10,12 @@ const TimeCombiner = (date, time) => {
     "02.00 PM",
     "03.00 PM",
     "04.00 PM",
-    "05.00 PM ",
+    "05.00 PM",
   ];
   const index = timeArray.indexOf(time);
+  console.log("index is ", index);
 
-  const hours = index + 12;
+  const hours = index + 10;
   date = new Date(date);
   date = date.setHours(hours);
 

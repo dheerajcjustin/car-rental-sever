@@ -13,6 +13,7 @@ const userSchema = new schema(
     verified: { type: Boolean },
     password: { type: String, trim: true },
     profilePic: { type: String },
+    
   },
   { timestamps: true }
 );
