@@ -17,10 +17,11 @@ const carSchema = new schema(
     name: { type: String, required: true, trim: true },
     price: { type: Number },
     rcNumber: { type: Number },
-    availableStart: { type: String },
-    availableEnd: { type: String },
-    availableTime: [{ type: Date }],
+    // availableStart: { type: String },
+    // availableEnd: { type: String },
+    // availableTime: [{ type: Date }],
     bookedTime: [{ type: String }],
+    bookedDates: [{ type: Date }],
     // bookingStart_date: { type: String },
     // bookingEnd_date: { type: String },
     // bookingStart_time: { type: String },
@@ -28,7 +29,8 @@ const carSchema = new schema(
     isActive: { type: Boolean },
     verified: { type: String, enum: ["pending", "rejected", "verified"] },
 
-    phots: [{ type: String }],
+    photos: [{ type: String }],
+    documents: [{ type: String }]
   },
   { timestamps: true }
 );
