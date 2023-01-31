@@ -4,10 +4,13 @@ const { Vendor } = require("../models/vendorModel");
 const { getDateRange } = require("../utils/dateRange");
 
 const addCar = async (req, res) => {
-  const { carData, url } = req.body;
-  console.log("body is ", req.body);
+  const { carData, documents, photos } = req.body;
+
+  // console.log("body is ", req.body);
   // console.log("the date array ", req.body.availabl.start);
   console.log("useris ", req.user);
+  console.log("douments ,", documents);
+  console.log("photos ", photos);
 
   try {
     const vendorId = mongoose.Types.ObjectId(req.user);
@@ -23,7 +26,8 @@ const addCar = async (req, res) => {
       price: carData.price,
       rcNumber: carData.rcNumber,
       verified: "pending",
-      phots: url,
+      photos: photos,
+      documents: documents,
       vendor: vendorId,
       availableTime,
       isActive: true,
@@ -67,7 +71,7 @@ const myCars = async (req, res) => {
         name: 1,
         rcNumber: 1,
         price: 1,
-        phots: 1,
+        photos: 1,
         verified: 1,
       },
     },

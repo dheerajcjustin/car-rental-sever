@@ -31,11 +31,11 @@ const search = async (req, res) => {
         );
     let cars;
     if (sort) {
-      if (sort == "priceHigh") {
+      if (sort.trim() == "high") {
         console.log("sorting by price high");
         cars = await Car.find().sort({ price: -1 });
       }
-      if (sort == "priceLow") {
+      if (sort.trim() == "low") {
         console.log("sorting by price low");
         cars = await Car.find().sort({ price: 1 });
       }
@@ -70,7 +70,7 @@ exports.search = search;
 
 const home = async (req, res) => {
   try {
-    const locations = await Location.find({ isActive: true }).select(
+    const locations = await Location.find().select(
       "location description image pickupPoints"
     );
 

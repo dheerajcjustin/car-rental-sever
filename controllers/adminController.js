@@ -10,7 +10,7 @@ const carList = async (req, res) => {
 };
 exports.carList = carList;
 
-const VerifyCar = async (req, res) => {
+          const VerifyCar = async (req, res) => {
   try {
     console.log("paramsaf", req.params);
     const { id } = req.params;
