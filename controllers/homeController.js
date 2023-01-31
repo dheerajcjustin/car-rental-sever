@@ -40,7 +40,9 @@ const search = async (req, res) => {
         cars = await Car.find().sort({ price: 1 });
       }
     }
-    cars = await Car.find();
+    cars = await Car.find().select(
+      "gearType fuelType seatNum location pickup vendor name price photos"
+    );
 
     let newPickup = TimeCombiner(pickupDate, pickupTime);
     let newDropOff = TimeCombiner(dropOffDate, dropOffTime);
