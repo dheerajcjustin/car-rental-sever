@@ -8,16 +8,17 @@ const addCar = async (req, res) => {
 
   // console.log("body is ", req.body);
   // console.log("the date array ", req.body.availabl.start);
+  console.log("the car data is in add vendor", carData);
   console.log("useris ", req.user);
   console.log("douments ,", documents);
   console.log("photos ", photos);
 
   try {
     const vendorId = mongoose.Types.ObjectId(req.user);
-    const availableTime = getDateRange(
-      carData.availableStart,
-      carData.availableEnd
-    );
+    // const availableTime = getDateRange(
+    //   carData.availableStart,
+    //   carData.availableEnd
+    // );
     const car = new Car({
       name: carData.modelName,
       price: carData.price,
@@ -25,14 +26,15 @@ const addCar = async (req, res) => {
       location: carData.location,
       price: carData.price,
       rcNumber: carData.rcNumber,
+      pickupPoints: [...carData.pickupPoints],
       verified: "pending",
       photos: photos,
       documents: documents,
       vendor: vendorId,
-      availableTime,
       isActive: true,
       fuelType: carData.fuelType,
       gearType: carData.transmission,
+
     });
     await car.save();
     await Vendor.findByIdAndUpdate(req.user, { $push: { cars: car._id } });

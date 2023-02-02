@@ -12,7 +12,7 @@ const carSchema = new schema(
     fuelType: { type: String, enum: ["petrol", "diesel"] },
     seatNum: { type: Number },
     location: { type: mongoose.Types.ObjectId },
-    pickup: [{ type: mongoose.Types.ObjectId }],
+    pickupPoints: [{ type: mongoose.Types.ObjectId }],
     vendor: { type: mongoose.Types.ObjectId },
     name: { type: String, required: true, trim: true },
     price: { type: Number },
