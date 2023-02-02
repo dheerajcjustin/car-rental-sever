@@ -4,6 +4,7 @@ const { Booking } = require("../models/BookingModel");
 const { TimeCombiner, isValidTime } = require("../utils/timeFormat");
 const { getDateRange } = require("../utils/dateRange");
 const moment = require("moment");
+const { default: mongoose } = require("mongoose");
 
 const search = async (req, res) => {
   try {
@@ -32,26 +33,44 @@ const search = async (req, res) => {
     let cars;
     if (sort) {
       if (sort.trim() == "high") {
-        console.log("sorting by price high");
-        cars = await Car.find().sort({ price: -1 });
+        cars = await Car.find({ location: locationId }).sort({ price: -1 });
       }
       if (sort.trim() == "low") {
-        console.log("sorting by price low");
-        cars = await Car.find().sort({ price: 1 });
+        cars = await Car.find({ location: locationId }).sort({ price: 1 });
       }
     }
-    cars = await Car.find().select(
-      "gearType fuelType seatNum location pickup vendor name price photos"
+
+    cars = await Car.find({ location: locationId }).select(
+      "gearType fuelType seatNum location pickup vendor name price photos "
     );
+
+    let locid = mongoose.Types.ObjectId(locationId)
+    const availablePickups = await Car.aggregate([
+      { $match: { location: locid } },
+      { $unwind: "$pickupPoints" },
+      {
+        $group: {
+          _id: "$pickupPoints",
+        }
+      }, {
+        $lookup: {
+          from: "locations",
+          localField: "_id",
+          foreignField: "pickupPoints._id",
+          as: "pickupPointDetails"
+        }
+      }
+    ])
+    console.log("avilable pickups", availablePickups);
+    // const newvalue = availablePickups.map(data => ({ _id: data._id, wowow: { corrds: data.pickupPointDetails[0].coords, name: data.pickupPointDetails[0] } }))
+    const pickups = availablePickups.map(data => (data.pickupPointDetails[0].pickupPoints))[0]
 
     let newPickup = TimeCombiner(pickupDate, pickupTime);
     let newDropOff = TimeCombiner(dropOffDate, dropOffTime);
 
-    console.log("new pickup and dropoff", newPickup, newDropOff);
 
     let diff = Math.round((newDropOff - newPickup) / (1000 * 60 * 60));
 
-    console.log("the how many hours are going to rent", diff);
     const time = {
       pickupDate: moment(newPickup).format("MMM Do YYYY"),
       dropOffDate: moment(newDropOff).format("MMM Do YYYY"),
@@ -60,10 +79,8 @@ const search = async (req, res) => {
       rentPeriod: diff,
     };
 
-    // console.log(cars);
-    res.status(201).json({ cars, time });
+    res.status(201).json({ cars, time, pickups });
   } catch (error) {
-    console.log(error);
     res.status(500).json("server error");
   }
 };
@@ -72,14 +89,13 @@ exports.search = search;
 
 const home = async (req, res) => {
   try {
-    const locations = await Location.find().select(
+    const locations = await Location.find({ pickupPoints: { $exists: true, $type: 'array', $ne: [] } }).select(
       "location description image pickupPoints"
     );
 
     const topPicks = await Car.find();
     res.status(201).json({ locations, topPicks });
   } catch (error) {
-    console.log("eerrrer ", error);
     res.sendStatus(500);
   }
 };
@@ -87,18 +103,13 @@ exports.home = home;
 
 const booking = async (req, res) => {
   try {
-    console.log("req.body from booking", req.body);
     res.status(201).json({ data: req.body });
     const { carId } = req.body;
-    console.log("car Id ", carId);
     let pickupDate = req.body.bookingTime.pickupDate;
     let dropOff = req.body.bookingTime.dropOffDate;
-    console.log(pickupDate);
     pickupDate = moment(pickupDate, "MMM Do YYYY").toDate();
     dropOff = moment(dropOff, "MMM Do YYYY").toDate();
     const bookedDates = getDateRange(pickupDate, dropOff);
-    console.log("booked dates", bookedDates);
-    // console.log("new time is ", newTime);
 
     await Car.updateOne(
       { _id: carId },
@@ -114,7 +125,6 @@ const booking = async (req, res) => {
     });
     newBooking.save();
   } catch (error) {
-    console.log(error);
     res.status(500);
   }
 };
