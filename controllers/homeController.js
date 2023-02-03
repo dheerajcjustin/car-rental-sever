@@ -45,6 +45,19 @@ const search = async (req, res) => {
     );
 
     let locid = mongoose.Types.ObjectId(locationId)
+    cars = await Car.aggregate([
+
+      { $match: { location: locid } },
+      {
+        $lookup: {
+          from: "locations",
+          localField: "location",
+          foreignField: "_id",
+          as: "locationData"
+        }
+      },
+
+    ])
     const availablePickups = await Car.aggregate([
       { $match: { location: locid } },
       { $unwind: "$pickupPoints" },
@@ -93,8 +106,8 @@ const home = async (req, res) => {
       "location description image pickupPoints"
     );
 
-    const topPicks = await Car.find();
-    res.status(201).json({ locations, topPicks });
+
+    res.status(201).json({ locations });
   } catch (error) {
     res.sendStatus(500);
   }
@@ -129,3 +142,35 @@ const booking = async (req, res) => {
   }
 };
 exports.booking = booking;
+const singleCar = async (req, res) => {
+  console.log("inside single car");
+  const id = mongoose.Types.ObjectId(req.params.id);
+  let car = await Car.aggregate([{ $match: { _id: id } }, {
+    $lookup: {
+      foreignField: "pickupPoints._id",
+      from: "locations",
+      localField: "pickupPoints",
+      as: "availableLocation",
+    }
+  }]);
+
+
+  let arrya1 = car[0].availableLocation[0].pickupPoints;
+  let arrya2 = car[0].pickupPoints;
+
+
+  arrya1 = arrya1.map(elm => ({ name: elm.name, coords: elm.coords, _id: (String(elm._id)) }))
+  arrya2 = arrya2.map(elm => (String(elm)))
+  const newData = arrya1.filter(({ _id }) => arrya2.includes(_id));
+
+  console.log("car is ", car[0].availableLocation[0].pickupPoints);
+  car = car[0];
+  car.availableLocation = car.availableLocation[0]
+  car.availableLocation.pickupPoints = newData;
+
+  console.log("new update car is ", car.availableLocation.pickupPoints);
+
+  res.status(201).json({ car });
+
+}
+exports.singleCar = singleCar;

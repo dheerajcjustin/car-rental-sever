@@ -11,6 +11,7 @@ const adminRoutes = require("./routes/adminRoutes");
 const corsOptions = require("./config/corsOption");
 const credentials = require("./middleware/credentials");
 const vendorRoutes = require("./routes/vendorRoutes");
+const paymentRoutes = require("./routes/paymentAndOrder")
 const morgan = require("morgan");
 
 server.use(credentials);
@@ -23,6 +24,7 @@ server.use("/", homeRoutes);
 server.use("/auth", authRoutes);
 server.use("/vendor", vendorRoutes);
 server.use("/admin", adminRoutes);
+server.use("/payment", paymentRoutes);
 server.use("*", (req, res) => {
   res.status(404).json("welcome to car rental api and you have invalid path");
 });
