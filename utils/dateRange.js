@@ -10,7 +10,7 @@ const getDateRange = (start, end) => {
     dateToday <= dateEnd;
     dateToday.setDate(dateToday.getDate() + 1)
   ) {
-    dateArray.push(moment(dateToday).format("MMM Do YYYY"));
+    dateArray.push(dateToday);
   }
   return dateArray;
 };

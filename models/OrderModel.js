@@ -1,6 +1,6 @@
 const mongoose = require("mongoose");
 const Joi = require("joi");
-const { boolean } = require("joi");
+const { boolean, string } = require("joi");
 
 // const passportLocalMongoose=require("passport-local-mongoose")
 
@@ -8,7 +8,7 @@ const schema = mongoose.Schema;
 
 const orderSchema = new schema(
     {
-        pickupDate: { type: Date },
+        pickupDate: { type: String },
         pickupTime: {
             type: String, enum:
                 [
@@ -22,7 +22,7 @@ const orderSchema = new schema(
                     "05.00 PM",
                 ]
         },
-        dropOffDate: { type: Date },
+        dropOffDate: { type: String },
         dropOffTime: {
             type: String, enum:
                 [
@@ -37,7 +37,7 @@ const orderSchema = new schema(
                 ]
         },
         carId: { type: mongoose.Types.ObjectId },
-        pickup: [{ type: mongoose.Types.ObjectId }],
+        pickup: {},
         userId: { type: mongoose.Types.ObjectId },
         price: { type: Number },
         pickupStatus: { type: Boolean, default: false },

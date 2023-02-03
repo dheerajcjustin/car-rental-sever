@@ -44,7 +44,10 @@ const search = async (req, res) => {
       "gearType fuelType seatNum location pickup vendor name price photos "
     );
 
+
+
     let locid = mongoose.Types.ObjectId(locationId)
+
     cars = await Car.aggregate([
 
       { $match: { location: locid } },
@@ -74,7 +77,7 @@ const search = async (req, res) => {
         }
       }
     ])
-    console.log("avilable pickups", availablePickups);
+    // console.log("avilable pickups", availablePickups);
     // const newvalue = availablePickups.map(data => ({ _id: data._id, wowow: { corrds: data.pickupPointDetails[0].coords, name: data.pickupPointDetails[0] } }))
     const pickups = availablePickups.map(data => (data.pickupPointDetails[0].pickupPoints))[0]
 
@@ -91,6 +94,11 @@ const search = async (req, res) => {
       dropOffTime,
       rentPeriod: diff,
     };
+
+    const bookedDates = getDateRange(pickupDate, dropOffDate)
+    console.log(bookedDates);
+    // [ 2023-01-20T18:30:00.000Z ]
+
 
     res.status(201).json({ cars, time, pickups });
   } catch (error) {
@@ -143,7 +151,6 @@ const booking = async (req, res) => {
 };
 exports.booking = booking;
 const singleCar = async (req, res) => {
-  console.log("inside single car");
   const id = mongoose.Types.ObjectId(req.params.id);
   let car = await Car.aggregate([{ $match: { _id: id } }, {
     $lookup: {
@@ -163,12 +170,10 @@ const singleCar = async (req, res) => {
   arrya2 = arrya2.map(elm => (String(elm)))
   const newData = arrya1.filter(({ _id }) => arrya2.includes(_id));
 
-  console.log("car is ", car[0].availableLocation[0].pickupPoints);
   car = car[0];
   car.availableLocation = car.availableLocation[0]
   car.availableLocation.pickupPoints = newData;
 
-  console.log("new update car is ", car.availableLocation.pickupPoints);
 
   res.status(201).json({ car });
 
