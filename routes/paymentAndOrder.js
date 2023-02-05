@@ -1,11 +1,14 @@
 const express = require("express");
 const router = express.Router();
+const { verifyJWT } = require("../middleware/authJwt");
+const { userAuth } = require("../middleware/userAuth");
 
 const { config, createPaymentIntent, paymentDone } = require("../controllers/PaymentAndOrders")
 
-router.get("/config", config)
-router.post("/createPaymentIntent", createPaymentIntent);
-router.post("/paymentDone", paymentDone);
+router.get("/config", verifyJWT, userAuth, config)
+router.post("/createPaymentIntent", verifyJWT, userAuth, createPaymentIntent);
+// order post /paymentDone
+router.post("/paymentDone", verifyJWT, userAuth, paymentDone);
 
 
 

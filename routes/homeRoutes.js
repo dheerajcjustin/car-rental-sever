@@ -1,5 +1,5 @@
-const { search, home, booking, singleCar } = require("../controllers/homeController");
-const { orderPost } = require("../controllers/userController")
+const { search, home, singleCar } = require("../controllers/homeController");
+const { bookings } = require("../controllers/userController")
 const { verifyJWT } = require("../middleware/authJwt");
 const { userAuth } = require("../middleware/userAuth");
 const express = require("express");
@@ -8,7 +8,7 @@ router.get("/car/:id", singleCar)
 router.get("/setup", home);
 // router.use("/search", verifyJWT);
 router.get("/search", search);
-router.post("/booking", verifyJWT, userAuth, booking);
-router.post("/order", verifyJWT, userAuth, orderPost)
+router.get("/bookings", verifyJWT, userAuth, bookings)
+
 
 module.exports = router;

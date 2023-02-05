@@ -48,19 +48,7 @@ const search = async (req, res) => {
 
     let locid = mongoose.Types.ObjectId(locationId)
 
-    cars = await Car.aggregate([
 
-      { $match: { location: locid } },
-      {
-        $lookup: {
-          from: "locations",
-          localField: "location",
-          foreignField: "_id",
-          as: "locationData"
-        }
-      },
-
-    ])
     const availablePickups = await Car.aggregate([
       { $match: { location: locid } },
       { $unwind: "$pickupPoints" },
@@ -96,12 +84,28 @@ const search = async (req, res) => {
     };
 
     const bookedDates = getDateRange(pickupDate, dropOffDate)
-    console.log(bookedDates);
+    // console.log("booked dates", bookedDates);
     // [ 2023-01-20T18:30:00.000Z ]
+    // const availableCars = await Car.find({ $and: [{ bookedDates: { $exists: true, $nin: [bookedDates] } }, { location: locid }] });
+    // console.log("THE BOOKED CARS", availableCars);
+    cars = await Car.aggregate([
+
+      { $match: { $and: [{ bookedDates: { $exists: true, $nin: [bookedDates] } }, { location: locid }] } },
+      {
+        $lookup: {
+          from: "locations",
+          localField: "location",
+          foreignField: "_id",
+          as: "locationData"
+        }
+      },
+
+    ])
 
 
     res.status(201).json({ cars, time, pickups });
   } catch (error) {
+    console.log(error);
     res.status(500).json("server error");
   }
 };

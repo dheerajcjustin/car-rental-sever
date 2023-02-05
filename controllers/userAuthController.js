@@ -14,7 +14,7 @@ const signupWithEmail = async (req, res) => {
   const userExits = await User.findOne({
     $and: [{ mobile: req.body.mobile }, { verified: true }],
   });
-  if (userExits.name) {
+  if (userExits?.name) {
     res
       .status(409)
       .json({ message: " mobile  already excites, signup failed" });
