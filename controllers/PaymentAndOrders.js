@@ -46,11 +46,7 @@ exports.createPaymentIntent = async (req, res) => {
 }
 
 exports.paymentDone = async (req, res) => {
-    try {
 
-    } catch (error) {
-
-    }
     console.log("inside the paymemt done to review the the body gerting")
     console.log(req.body);
     const { carId, payAmount, selectedPickup, bookingTime } = req.body;
@@ -79,11 +75,12 @@ exports.paymentDone = async (req, res) => {
     const pickupPoint = selectLocation.pickupPoints.filter(pick => pick.id == pickup)
     console.log("pickup pintei is ", pickupPoint[0]);
     // console.log("selected location is ", selectLocation);
+    const userId = mongoose.Types.ObjectId(req.user);
 
 
 
 
-    const order = new Order({ carId, price: payAmount, selectedPickup, pickupDate: bookingTime.pickupDate, dropOffDate: bookingTime.dropOffDate, pickupTime: bookingTime.pickupTime.trim(), dropOffTime: bookingTime.dropOffTime.trim(), pickup: pickupPoint[0] })
+    const order = new Order({ carId, price: payAmount, selectedPickup, pickupDate: bookingTime.pickupDate, dropOffDate: bookingTime.dropOffDate, pickupTime: bookingTime.pickupTime.trim(), dropOffTime: bookingTime.dropOffTime.trim(), pickup: pickupPoint[0], userId })
     console.log(order);
     await order.save();
     let pickupDate = moment(bookingTime.pickupDate, "MMM Do YYYY").toDate();
@@ -93,7 +90,7 @@ exports.paymentDone = async (req, res) => {
 
     await Car.updateOne(
         { _id: carId },
-        { $push: { bookedTime: [...bookedDates] } }
+        { $push: { bookedDates: [...bookedDates] } }
     );
 
 
