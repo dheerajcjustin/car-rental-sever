@@ -9,7 +9,7 @@ const addCar = async (req, res) => {
   // console.log("body is ", req.body);
   // console.log("the date array ", req.body.availabl.start);
   console.log("the car data is in add vendor", carData);
-  console.log("useris ", req.user);
+  // console.log("useris ", req.user);
   console.log("douments ,", documents);
   console.log("photos ", photos);
 
