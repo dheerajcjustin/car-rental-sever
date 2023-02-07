@@ -6,7 +6,7 @@ const {
   locationList,
   locationDelete, getPickupPoints
 } = require("../controllers/locationManagement");
-const { carList, VerifyCar } = require("../controllers/adminController");
+const { carList, VerifyCar, VendorList } = require("../controllers/adminController");
 
 router.post("/location", addLocation).get("/location", locationList);
 
@@ -16,4 +16,5 @@ router.post("/pickupPoint", addPickupPoint);
 router.get("/carsList", carList);
 
 router.patch("/car/:id", VerifyCar);
+router.get("/vendors", VendorList)
 module.exports = router;
