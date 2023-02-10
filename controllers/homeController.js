@@ -10,6 +10,10 @@ const search = async (req, res) => {
   try {
     let { locationId, pickupDate, dropOffDate, pickupTime, dropOffTime, sort } =
       req.query;
+    console.log("the req.quary .page is ", req.query.page);;
+    let page = parseInt(req.query.page) || 1;
+    page--;
+    const limitNum = 3;
 
     if (
       !locationId ||
@@ -88,9 +92,13 @@ const search = async (req, res) => {
     // [ 2023-01-20T18:30:00.000Z ]
     // const availableCars = await Car.find({ $and: [{ bookedDates: { $exists: true, $nin: [bookedDates] } }, { location: locid }] });
     // console.log("THE BOOKED CARS", availableCars);
+    // console.log(vendors);
+    console.log("page and limit num ", page, limitNum);
     cars = await Car.aggregate([
 
       { $match: { $and: [{ bookedDates: { $exists: true, $nin: [bookedDates] } }, { location: locid }] } },
+      { $skip: page * limitNum },
+      { $limit: limitNum },
       {
         $lookup: {
           from: "locations",
@@ -99,10 +107,17 @@ const search = async (req, res) => {
           as: "locationData"
         }
       },
+      { $project: { gearType: 1, fuelType: 1, seatNum: 1, location: 1, pickup: 1, vendor: 1, name: 1, price: 1, photos: 1 } }
 
     ])
 
-
+    console.log();
+    console.log();
+    console.log();
+    console.log();
+    console.log();
+    console.log();
+    console.log("inside the data");
     res.status(201).json({ cars, time, pickups });
   } catch (error) {
     console.log(error);
