@@ -1,7 +1,9 @@
 const { default: mongoose } = require("mongoose");
 const { Car } = require("../models/carModel");
 const { Vendor } = require("../models/vendorModel");
+const { Order } = require("../models/OrderModel")
 const { getDateRange } = require("../utils/dateRange");
+const { tryCatch } = require("../utils/tryCatch")
 
 const addCar = async (req, res) => {
   const { carData, documents, photos } = req.body;
@@ -85,3 +87,67 @@ const myCars = async (req, res) => {
   res.status(201).json(cars);
 };
 exports.myCars = myCars;
+
+
+exports.VendorBookings = tryCatch(async (req, res) => {
+
+  const vendorId = mongoose.Types.ObjectId(req.user);
+
+  const upComingEvents = await Car.aggregate([{
+    $match: { vendor: vendorId },
+  }, {
+    $lookup: {
+      localField: "_id",
+      foreignField: "carId",
+      from: "orders",
+      as: "myOrders"
+    }
+  }, { $unwind: "$myOrders" },
+  { $match: { "myOrders.dropOffStatus": false } }
+
+
+  ]);
+
+  const completedEvents = await Car.aggregate([{
+    $match: { vendor: vendorId },
+  }, {
+    $lookup: {
+      localField: "_id",
+      foreignField: "carId",
+      from: "orders",
+      as: "myOrders"
+    }
+  }, { $unwind: "$myOrders" },
+  { $match: { "myOrders.pickupStatus": true, "myOrders.dropOffStatus": true } }
+
+  ]);
+  // console.log(upComingEvents.map(evnet => evnet.myOrders))
+  res.status(201).json({ upComingEvents, completedEvents })
+})
+
+exports.bookingsStatus = tryCatch(async (req, res) => {
+  const { orderId, pickupStatus, dropOffStatus } = req.body;
+  console.log("dropOffStatus", (dropOffStatus));
+  console.log("pickupStatus", (pickupStatus),);
+  if (pickupStatus) {
+    console.log("pickupStatus");
+  }
+  if (dropOffStatus) {
+    console.log("dropOffStatus");
+
+  }
+
+
+  // if (pickupStatus || dropOffStatus) return res.status(400).json("valid status  values are 'pickupStatus' ,'dropOffStatus' ")
+
+  let order;
+  if (pickupStatus) {
+    order = await Order.findByIdAndUpdate(orderId, { $set: { pickupStatus: true } })
+    return res.status(201).json(order);
+  } if (dropOffStatus) {
+    order = await Order.findByIdAndUpdate(orderId, { $set: { dropOffStatus: true } })
+    return res.status(201).json(order);
+
+  }
+  res.status(201)
+})
