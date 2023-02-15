@@ -6,6 +6,7 @@ const bcrypt = require("bcrypt");
 const crypto = require("crypto");
 const Joi = require("joi");
 const { sendOtp, otpVerifyFunction } = require("../utils/Otp");
+const { tryCatch } = require("../utils/tryCatch")
 
 const signupVendor = async (req, res) => {
   validate(req.body);
@@ -245,3 +246,36 @@ const changePassword = async (req, res) => {
   }
 };
 exports.changePassword = changePassword;
+
+exports.profilePatch = tryCatch(async (req, res) => {
+
+  console.log(req.body);
+  const { name, mobile, otp } = req.body;
+  const vendorId = req.user;
+  const response = await otpVerifyFunction(otp, mobile);
+  console.log("response of otp", response);
+  if (response.status === true) {
+    await Vendor.updateOne({ _id: vendorId }, { $set: { name: name, mobile: mobile } });
+    res.status(200).json(req.body)
+  } else {
+    res.status(400);
+  }
+})
+exports.sendOtp = tryCatch(async (req, res) => {
+  const { name, mobile } = req.body;
+
+  console.log(mobile);
+  const checkMobile = await Vendor.findOne({ mobile })
+  if (String(checkMobile._id) == req.user) {
+    const response = await sendOtp(mobile);
+    if (response.status === true) {
+      res.status(201).json({ mobile, name })
+    } else {
+      res.status(400).json("invalid mobile")
+    }
+  } else {
+    res.status(400).json("mobile number already exits");
+  }
+
+
+})

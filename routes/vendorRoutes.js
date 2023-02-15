@@ -6,9 +6,9 @@ const {
   otpVerify,
   ChangePasswordOtp,
   changePassword,
-  forgotPassword,
+  forgotPassword, profilePatch, sendOtp
 } = require("../controllers/vendorAuth");
-const { addCar, myCars } = require("../controllers/vendorController");
+const { addCar, myCars, VendorBookings, bookingsStatus } = require("../controllers/vendorController");
 const { verifyJWT } = require("../middleware/authJwt");
 const { vendorAuth } = require("../middleware/vendorAuth");
 /// 
@@ -43,8 +43,12 @@ router.post("/ChangePasswordOtp", ChangePasswordOtp);
 //document is Array contains 3 url of image of car documents in the order [RC,pollution,insurance]
 
 router.post("/addCar", verifyJWT, vendorAuth, addCar);
-
-//
 router.get("/myCars", verifyJWT, vendorAuth, myCars);
+router.get("/bookings", verifyJWT, vendorAuth, VendorBookings)
+router.patch("/bookingsStatus", verifyJWT, vendorAuth, bookingsStatus);
+router.patch("/profile", verifyJWT, vendorAuth, profilePatch);
+router.post("/sendOtp", verifyJWT, vendorAuth, sendOtp)
+
+
 
 module.exports = router;
