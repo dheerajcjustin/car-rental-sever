@@ -48,7 +48,7 @@ router.get("/bookings", verifyJWT, vendorAuth, VendorBookings)
 router.patch("/bookingsStatus", verifyJWT, vendorAuth, bookingsStatus);
 router.patch("/profile", verifyJWT, vendorAuth, profilePatch);
 router.post("/sendOtp", verifyJWT, vendorAuth, sendOtp)
-router.get("profile", verifyJWT, vendorAuth, getProfile)
+router.get("/profile", verifyJWT, vendorAuth, getProfile)
 
 
 

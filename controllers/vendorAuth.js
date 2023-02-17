@@ -255,7 +255,12 @@ exports.profilePatch = tryCatch(async (req, res) => {
   const response = await otpVerifyFunction(otp, mobile);
   console.log("response of otp", response);
   if (response.status === true) {
-    await Vendor.updateOne({ _id: vendorId }, { $set: { name: name, mobile: mobile } });
+    if (name && name.length > 2) {
+      await Vendor.updateOne({ _id: vendorId }, { $set: { name: name, mobile: mobile } });
+    } else {
+      await Vendor.updateOne({ _id: vendorId }, { $set: { mobile: mobile } });
+
+    }
     res.status(200).json(req.body)
   } else {
     res.status(400);
@@ -284,4 +289,12 @@ exports.getProfile = tryCatch(async (req, res) => {
   const vendorId = req.user;
   const profile = await Vendor.findById(vendorId).select("name mobile profilePic")
   res.send(201).json(profile);
+})
+
+exports.patchProfilePic = tryCatch(async (req, res) => {
+  const vendorId = req.user;
+  const { profilePic } = req.body;
+  if (!profilePic) return res.status(400).json("image is not found");
+  const profile = await Vendor.findByIdAndUpdate(vendorId, { $set: { profilePic: profilePic } }).select("name mobile profilePic")
+  res.sendStatus(201);
 })
