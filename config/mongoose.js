@@ -9,6 +9,7 @@ const config = async () => {
       console.log("mongoose connceta ayye ketto");
     })
     .catch((err) => {
+      console.log(err);
       console.log("mongoose entho sean unde");
     });
 };

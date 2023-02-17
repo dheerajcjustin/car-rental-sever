@@ -6,7 +6,7 @@ const {
   otpVerify,
   ChangePasswordOtp,
   changePassword,
-  forgotPassword, profilePatch, sendOtp, getProfile
+  forgotPassword, profilePatch, sendOtp, getProfile, patchProfilePic
 } = require("../controllers/vendorAuth");
 const { addCar, myCars, VendorBookings, bookingsStatus } = require("../controllers/vendorController");
 const { verifyJWT } = require("../middleware/authJwt");
@@ -49,6 +49,7 @@ router.patch("/bookingsStatus", verifyJWT, vendorAuth, bookingsStatus);
 router.patch("/profile", verifyJWT, vendorAuth, profilePatch);
 router.post("/sendOtp", verifyJWT, vendorAuth, sendOtp)
 router.get("/profile", verifyJWT, vendorAuth, getProfile)
+router.patch("/profilePic", verifyJWT, vendorAuth, patchProfilePic)
 
 
 

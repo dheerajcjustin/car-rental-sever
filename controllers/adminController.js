@@ -58,3 +58,20 @@ exports.VendorList = tryCatch(async (req, res) => {
   console.log(vendors);
   res.status(201).json(vendors);
 })
+
+exports.vendorReports = tryCatch(async (req, res) => {
+  const reports = await Vendor.aggregate([{ $unwind: "$reports" },
+  {
+    $match: { "reports.readStatus": false }
+  },
+  {
+    $lookup: {
+      localField: "carId",
+      as: "carData",
+      foreignField: "_id",
+      from: "cars"
+    }
+  }
+  ])
+  res.status(201).json(reports)
+})

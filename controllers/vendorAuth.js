@@ -261,7 +261,7 @@ exports.profilePatch = tryCatch(async (req, res) => {
       await Vendor.updateOne({ _id: vendorId }, { $set: { mobile: mobile } });
 
     }
-    res.status(200).json(req.body)
+    res.status(201).json(req.body)
   } else {
     res.status(400);
   }

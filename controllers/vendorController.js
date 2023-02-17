@@ -71,6 +71,10 @@ const myCars = async (req, res) => {
         price: 1,
         photos: 1,
         verified: 1,
+        pickupPoints: 1,
+        documents: 1,
+        fuelType: 1,
+        gearType: 1,
       },
     },
   ]);
