@@ -279,3 +279,9 @@ exports.sendOtp = tryCatch(async (req, res) => {
 
 
 })
+
+exports.getProfile = tryCatch(async (req, res) => {
+  const vendorId = req.user;
+  const profile = await Vendor.findById(vendorId).select("name mobile profilePic")
+  res.send(201).json(profile);
+})

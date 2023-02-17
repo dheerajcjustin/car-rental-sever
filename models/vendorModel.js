@@ -13,6 +13,7 @@ const vendorSchema = new schema(
     password: { type: String, trim: true },
     profilePic: { type: String },
     cars: [{ type: mongoose.Types.ObjectId }],
+    reports: [{ message: { type: String }, readStatus: { type: Boolean, default: false }, carId: { type: mongoose.Types.ObjectId } }]
   },
   { timestamps: true }
 );

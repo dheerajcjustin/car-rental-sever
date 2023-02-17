@@ -144,7 +144,7 @@ exports.home = home;
 const booking = async (req, res) => {
   try {
     res.status(201).json({ data: req.body });
-    const { carId } = req.body;
+    const { carId, payAmount } = req.body;
     let pickupDate = req.body.bookingTime.pickupDate;
     let dropOff = req.body.bookingTime.dropOffDate;
     pickupDate = moment(pickupDate, "MMM Do YYYY").toDate();
@@ -162,6 +162,7 @@ const booking = async (req, res) => {
       dropOffDate: req.body.bookingTime.dropOffDate,
       pickupTime: req.body.bookingTime.pickupTime,
       dropOffTime: req.body.bookingTime.dropOffTime,
+      price: payAmount,
     });
     newBooking.save();
   } catch (error) {

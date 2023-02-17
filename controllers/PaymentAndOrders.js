@@ -46,7 +46,6 @@ exports.createPaymentIntent = async (req, res) => {
 }
 
 exports.paymentDone = async (req, res) => {
-
     console.log("inside the paymemt done to review the the body gerting")
     console.log(req.body);
     const { carId, payAmount, selectedPickup, bookingTime } = req.body;
