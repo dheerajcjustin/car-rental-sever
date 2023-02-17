@@ -1,13 +1,21 @@
 const { default: mongoose } = require("mongoose");
 const { Car } = require("../models/carModel");
 const { Vendor } = require("../models/vendorModel");
+const { Admin, validateAdmin } = require("../models/adminModel");
 const { tryCatch } = require("../utils/tryCatch")
 const { Location } = require("../models/locationModel");
 const objectid = require("valid-objectid");
 const { updateOne } = require("../models/tokenModel");
+const { sendOtp, otpVerifyFunction } = require("../utils/Otp")
 const carList = async (req, res) => {
-  const cars = await Car.find();
-  console.log(cars);
+  const cars = await Car.aggregate([{
+    $lookup: {
+      as: "vendor",
+      from: "vendors",
+      foreignField: "_id",
+      localField: "vendor"
+    }
+  }]);
   return res.status(201).json(cars);
 };
 exports.carList = carList;
@@ -27,10 +35,8 @@ const VerifyCar = async (req, res) => {
         .status(406)
         .json("ony valid status option are (rejected, verified) ");
     }
-
     const carId = mongoose.Types.ObjectId(id);
     await Car.updateOne({ _id: carId }, { verified: status });
-
     res.status(201).json("wowo update succcresfull");
   } catch (error) {
     console.log(error);
@@ -38,7 +44,6 @@ const VerifyCar = async (req, res) => {
   }
 };
 exports.VerifyCar = VerifyCar;
-
 exports.VendorList = tryCatch(async (req, res) => {
   // console.log("req.params", req.query);
   let page = parseInt(req.query.page) || 1;
@@ -51,7 +56,5 @@ exports.VendorList = tryCatch(async (req, res) => {
   // vendors.push(...vendors.map(vet => ({ name: vet.name, mobile: vet.mobile, verified: true, _id: vet._id + "a" })))
   // vendors.push(vendors.map(vet => vet._id + "a"))
   console.log(vendors);
-
-
   res.status(201).json(vendors);
 })
