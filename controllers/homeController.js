@@ -93,10 +93,10 @@ const search = async (req, res) => {
     // const availableCars = await Car.find({ $and: [{ bookedDates: { $exists: true, $nin: [bookedDates] } }, { location: locid }] });
     // console.log("THE BOOKED CARS", availableCars);
     // console.log(vendors);
-    console.log("page and limit num ", page, limitNum);
+    console.log("page and limit num ", bookedDates);
     cars = await Car.aggregate([
 
-      { $match: { $and: [{ bookedDates: { $exists: true, $nin: [bookedDates] } }, { location: locid }] } },
+      { $match: { $and: [{ bookedDates: { $nin: bookedDates } }, { location: locid }] } },
       { $skip: page * limitNum },
       { $limit: limitNum },
       {
