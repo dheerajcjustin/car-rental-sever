@@ -117,7 +117,7 @@ const search = async (req, res) => {
     console.log();
     console.log();
     console.log();
-    console.log("inside the data");
+    console.log("inside the data", cars);
     res.status(201).json({ cars, time, pickups });
   } catch (error) {
     console.log(error);
