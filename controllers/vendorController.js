@@ -138,3 +138,5 @@ exports.bookingsStatus = tryCatch(async (req, res) => {
   }
   res.status(201)
 })
+
+exports.carHistory = (tryCatch((req, res) => { }))
