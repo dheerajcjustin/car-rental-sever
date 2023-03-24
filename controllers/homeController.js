@@ -8,9 +8,9 @@ const { default: mongoose } = require("mongoose");
 
 const search = async (req, res) => {
   try {
-    let { locationId, pickupDate, dropOffDate, pickupTime, dropOffTime, sort } =
+    let { locationId, pickupDate, dropOffDate, pickupTime, dropOffTime, sort, filter } =
       req.query;
-    console.log("the req.quary .page is ", req.query.page);;
+    // console.log("the req.quary .filter is ", req.query.filter);;
     let page = parseInt(req.query.page) || 1;
     page--;
     const limitNum = 3;
@@ -94,30 +94,48 @@ const search = async (req, res) => {
     // console.log("THE BOOKED CARS", availableCars);
     // console.log(vendors);
     console.log("page and limit num ", bookedDates);
-    cars = await Car.aggregate([
+    if (filter) {
+      const picup = mongoose.Types.ObjectId(filter);
+      cars = await Car.aggregate([
 
-      { $match: { $and: [{ bookedDates: { $nin: bookedDates } }, { location: locid }] } },
-      { $skip: page * limitNum },
-      { $limit: limitNum },
-      {
-        $lookup: {
-          from: "locations",
-          localField: "location",
-          foreignField: "_id",
-          as: "locationData"
-        }
-      },
-      { $project: { gearType: 1, fuelType: 1, seatNum: 1, location: 1, pickup: 1, vendor: 1, name: 1, price: 1, photos: 1 } }
+        { $match: { $and: [{ bookedDates: { $nin: bookedDates } }, { location: locid }, { pickupPoints: picup }] } },
+        { $skip: page * limitNum },
+        { $limit: limitNum },
+        {
+          $lookup: {
+            from: "locations",
+            localField: "location",
+            foreignField: "_id",
+            as: "locationData"
+          }
+        },
 
-    ])
+        { $project: { gearType: 1, fuelType: 1, seatNum: 1, location: 1, pickup: 1, vendor: 1, name: 1, price: 1, photos: 1 } }
 
-    console.log();
-    console.log();
-    console.log();
-    console.log();
-    console.log();
-    console.log();
-    console.log("inside the data", cars);
+      ])
+      console.log("inside the filt3er area", cars, page);
+
+    } else {
+      cars = await Car.aggregate([
+
+        { $match: { $and: [{ bookedDates: { $nin: bookedDates } }, { location: locid }] } },
+        { $skip: page * limitNum },
+        { $limit: limitNum },
+        {
+          $lookup: {
+            from: "locations",
+            localField: "location",
+            foreignField: "_id",
+            as: "locationData"
+          }
+        },
+        { $project: { gearType: 1, fuelType: 1, seatNum: 1, location: 1, pickup: 1, vendor: 1, name: 1, price: 1, photos: 1 } }
+
+      ])
+    }
+
+
+
     res.status(201).json({ cars, time, pickups });
   } catch (error) {
     console.log(error);
@@ -134,7 +152,7 @@ const home = async (req, res) => {
     );
 
 
-    res.status(201).json({ locations });
+    res.status(201).json(locations);
   } catch (error) {
     res.sendStatus(500);
   }
