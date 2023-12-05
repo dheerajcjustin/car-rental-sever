@@ -1,28 +1,28 @@
 {
-  "name": "car-rental-sever",
-  "version": "1.0.0",
-  "description": "car rental back end",
-  "main": "server.js",
-  "scripts": {
-    "test": "run",
-    "dev": "nodemon server.js"
-  },
-  "author": "dheerajcjustin",
-  "license": "ISC",
-  "dependencies": {
-    "bcrypt": "^5.1.0",
-    "cors": "^2.8.5",
-    "dotenv": "^16.0.3",
-    "express": "^4.18.2",
-    "joi": "^17.7.0",
-    "jsonwebtoken": "^9.0.0",
-    "moment": "^2.29.4",
-    "mongoose": "^6.8.2",
-    "morgan": "^1.10.0",
-    "nodemon": "^2.0.20",
-    "path": "^0.12.7",
-    "stripe": "^11.9.0",
-    "twilio": "^3.84.0",
-    "valid-objectid": "^0.0.2"
-  }
+      "name": "car-rental-sever",
+      "version": "1.0.0",
+      "description": "car rental back end",
+      "main": "server.js",
+      "scripts": {
+            "test": "run",
+            "dev": "nodemon server.js"
+      },
+      "author": "dheerajcjustin",
+      "license": "ISC",
+      "dependencies": {
+            "bcrypt": "^5.1.0",
+            "cors": "^2.8.5",
+            "dotenv": "^16.0.3",
+            "express": "^4.18.2",
+            "joi": "^17.7.0",
+            "jsonwebtoken": "^9.0.0",
+            "moment": "^2.29.4",
+            "mongoose": "^6.8.2",
+            "morgan": "^1.10.0",
+            "nodemon": "^2.0.20",
+            "path": "^0.12.7",
+            "stripe": "^11.9.0",
+            "twilio": "^3.84.0",
+            "valid-objectid": "^0.0.2"
+      }
 }

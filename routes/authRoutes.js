@@ -1,13 +1,13 @@
 const express = require("express");
 const { validate } = require("../models/userModel");
 const {
-  signupWithEmail,
-  loginWithEmail,
-  otpVerify,
-  changePassword,
-  forgotPassword,
-  ChangePasswordOtp,
-  resendOtp,
+      signupWithEmail,
+      loginWithEmail,
+      otpVerify,
+      changePassword,
+      forgotPassword,
+      ChangePasswordOtp,
+      resendOtp,
 } = require("../controllers/userAuthController");
 const validateReqBody = require("../middleware/validateReqBody");
 // const { verifyToken } = require("../helpers/authJwt");
