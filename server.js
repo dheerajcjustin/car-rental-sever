@@ -19,7 +19,7 @@ server.use(express.json());
 server.use(express.urlencoded({ extended: true }));
 server.use(cors(corsOptions));
 dbConnect();
-server.use(morgan("dev"));
+// server.use(morgan("dev"));
 server.use("/", homeRoutes);
 server.use("/auth", authRoutes);
 server.use("/vendor", vendorRoutes);
@@ -27,14 +27,12 @@ server.use("/admin", adminRoutes);
 server.use("/payment", paymentRoutes);
 server.use("*", (req, res) => {
       res.status(404).json(
-            "welcome to car rental api and you have invalid path",
+            "welcome to car rental api and you have invalid path"
       );
 });
 
 server.listen(process.env.port, () => {
       console.log(
-            "server run ayye !!!! at http://localhost:" +
-                  process.env.port +
-                  "/",
+            "server run ayye !!!! at http://localhost:" + process.env.port + "/"
       );
 });

@@ -12,7 +12,7 @@ const signupVendor = async (req, res) => {
       validate(req.body);
       const userExits = await Vendor.findOne(
             { mobile: req.body.mobile },
-            { verified: true },
+            { verified: true }
       );
       if (userExits?.name) {
             console.log("user is aleray exits while signup", userExits);
@@ -57,7 +57,7 @@ const otpVerify = async (req, res) => {
             if (response.status === true) {
                   const user = await Vendor.findOneAndUpdate(
                         { mobile },
-                        { verified: true },
+                        { verified: true }
                   );
                   const tokenData = {
                         role: "vendor",
@@ -69,7 +69,7 @@ const otpVerify = async (req, res) => {
                   };
                   const accessToken = await JWT.sign(
                         tokenData,
-                        process.env.ACCESS_TOKEN_SECRET,
+                        process.env.ACCESS_TOKEN_SECRET
                   );
                   return res.status(201).json({
                         message: "otp successful",
@@ -107,7 +107,7 @@ const loginVendor = async (req, res) => {
                   console.log("uer is  found ", user);
                   const validPass = await bcrypt.compare(
                         password,
-                        user.password,
+                        user.password
                   );
                   const tokenData = {
                         role: "vendor",
@@ -125,7 +125,7 @@ const loginVendor = async (req, res) => {
 
                         const accessToken = await JWT.sign(
                               tokenData,
-                              process.env.ACCESS_TOKEN_SECRET,
+                              process.env.ACCESS_TOKEN_SECRET
                         );
                         console.log("login succes fuls ");
                         return res.status(201).json({
@@ -161,16 +161,16 @@ const forgotPassword = async (req, res) => {
                   const response = await sendOtp(mobile);
                   if (response.status === true) {
                         res.status(201).json(
-                              `otp send successfully at to change password ${mobile}`,
+                              `otp send successfully at to change password ${mobile}`
                         );
                   } else {
                         res.status(500).json(
-                              `otp failed for network error   at ${mobile} contact developer`,
+                              `otp failed for network error   at ${mobile} contact developer`
                         );
                   }
             } else {
                   res.status(400).json(
-                        `there is no user with mobile number${mobile}`,
+                        `there is no user with mobile number${mobile}`
                   );
             }
       } catch (error) {
@@ -242,7 +242,7 @@ const changePassword = async (req, res) => {
                   return res
                         .status(400)
                         .send(
-                              "invalid at userId,  is no user with that userId or expired",
+                              "invalid at userId,  is no user with that userId or expired"
                         );
             const token = await Token.findOne({
                   userId: uid,
@@ -274,12 +274,12 @@ exports.profilePatch = tryCatch(async (req, res) => {
             if (name && name.length > 2) {
                   await Vendor.updateOne(
                         { _id: vendorId },
-                        { $set: { name: name, mobile: mobile } },
+                        { $set: { name: name, mobile: mobile } }
                   );
             } else {
                   await Vendor.updateOne(
                         { _id: vendorId },
-                        { $set: { mobile: mobile } },
+                        { $set: { mobile: mobile } }
                   );
             }
             res.status(201).json(req.body);
@@ -307,7 +307,7 @@ exports.sendOtp = tryCatch(async (req, res) => {
 exports.getProfile = tryCatch(async (req, res) => {
       const vendorId = req.user;
       const profile = await Vendor.findById(vendorId).select(
-            "name mobile profilePic",
+            "name mobile profilePic"
       );
       res.send(201).json(profile);
 });

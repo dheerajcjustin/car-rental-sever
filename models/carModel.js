@@ -35,8 +35,14 @@ const carSchema = new schema(
             photos: [{ type: String }],
             documents: [{ type: String }],
       },
-      { timestamps: true },
+      { timestamps: true }
 );
+
+const carVerifiedStatus = {
+      pending: "pending",
+      rejected: "rejected",
+      verified: "verified",
+};
 
 function validateCar(car) {
       const schema = Joi.object({
@@ -72,3 +78,4 @@ function validateCar(car) {
 const Car = mongoose.model("Car", carSchema);
 exports.Car = Car;
 exports.validateCar = validateCar;
+exports.carVerifiedStatus = carVerifiedStatus;

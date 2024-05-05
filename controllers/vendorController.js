@@ -1,15 +1,13 @@
 const { default: mongoose } = require("mongoose");
-const { Car } = require("../models/carModel");
+const { Car, carVerifiedStatus } = require("../models/carModel");
 const { Vendor } = require("../models/vendorModel");
 const { Order } = require("../models/OrderModel");
 const { getDateRange } = require("../utils/dateRange");
 const { tryCatch } = require("../utils/tryCatch");
 const addCar = async (req, res) => {
       const { carData, documents, photos } = req.body;
-      // console.log("body is ", req.body);
-      // console.log("the date array ", req.body.availabl.start);
+
       console.log("the car data is in add vendor", carData);
-      // console.log("useris ", req.user);
       console.log("douments ,", documents);
       console.log("photos ", photos);
       try {
@@ -26,7 +24,7 @@ const addCar = async (req, res) => {
                   price: carData.price,
                   rcNumber: carData.rcNumber,
                   pickupPoints: [...carData.pickupPoints],
-                  verified: "pending",
+                  verified: carVerifiedStatus.verified,
                   photos: photos,
                   documents: documents,
                   vendor: vendorId,

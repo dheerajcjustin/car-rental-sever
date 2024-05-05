@@ -40,14 +40,14 @@ exports.bookings = async (req, res) => {
             if (upComingEvents.length > 0) {
                   // console.log("upcoming pidups", upComingPickups);
                   upComingEvents.forEach(
-                        (data) => (data.carData = data.carData[0]),
+                        (data) => (data.carData = data.carData[0])
                   );
                   // console.log("upcoming pidups AFTER", upComingPickups);
             }
             if (completedEvents.length > 0) {
                   // myBookings.carData = myBookings.carData[0]
                   completedEvents.forEach(
-                        (data) => (data.carData = data.carData[0]),
+                        (data) => (data.carData = data.carData[0])
                   );
                   // console.log("upcoming myBookings", myBookings);
             }
@@ -67,7 +67,7 @@ exports.reportVendor = tryCatch(async (req, res) => {
       const vendor = mongoose.Types.ObjectId(vendorId);
       await Vendor.updateOne(
             { _id: vendor },
-            { $push: { reports: { message, carId } } },
+            { $push: { reports: { message, carId } } }
       );
       const elm = await Vendor.findOne({ _id: vendor });
       res.status(201).json(elm);
@@ -76,7 +76,7 @@ exports.reportVendor = tryCatch(async (req, res) => {
 exports.getProfile = tryCatch(async (req, res) => {
       const userId = req.user;
       const profile = await User.findById(vendorId).select(
-            "name mobile profilePic",
+            "name mobile profilePic"
       );
       res.send(201).json(profile);
 });
@@ -101,12 +101,12 @@ exports.profilePatch = tryCatch(async (req, res) => {
             if (name && name.length > 2) {
                   await User.updateOne(
                         { _id: vendorId },
-                        { $set: { name: name, mobile: mobile } },
+                        { $set: { name: name, mobile: mobile } }
                   );
             } else {
                   await User.updateOne(
                         { _id: vendorId },
-                        { $set: { mobile: mobile } },
+                        { $set: { mobile: mobile } }
                   );
             }
             res.status(201).json(req.body);
