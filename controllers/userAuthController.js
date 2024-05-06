@@ -43,7 +43,7 @@ const signupWithEmail = async (req, res) => {
                   }
             } catch (error) {
                   console.log(error);
-                  res.status(500).json({ message: "some went wrong  " });
+                  res.status(500).json({ message: "some went wrong  ", error });
             }
       }
 };
@@ -57,7 +57,7 @@ const otpVerify = async (req, res) => {
             if (response.status === true) {
                   const user = await User.findOneAndUpdate(
                         { mobile },
-                        { verified: true },
+                        { verified: true }
                   );
                   const tokenData = {
                         role: "user",
@@ -69,7 +69,7 @@ const otpVerify = async (req, res) => {
                   };
                   const accessToken = await JWT.sign(
                         tokenData,
-                        process.env.ACCESS_TOKEN_SECRET,
+                        process.env.ACCESS_TOKEN_SECRET
                   );
                   return res.status(201).json({
                         message: "otp successful",
@@ -110,7 +110,7 @@ const loginWithEmail = async (req, res) => {
                   console.log("uer is  found ", user);
                   const validPass = await bcrypt.compare(
                         password,
-                        user.password,
+                        user.password
                   );
                   const tokenData = {
                         role: "user",
@@ -127,7 +127,7 @@ const loginWithEmail = async (req, res) => {
 
                         const accessToken = await JWT.sign(
                               tokenData,
-                              process.env.ACCESS_TOKEN_SECRET,
+                              process.env.ACCESS_TOKEN_SECRET
                         );
                         console.log("login succes fuls ");
                         return res.status(201).json({
@@ -162,16 +162,16 @@ const forgotPassword = async (req, res) => {
                   const response = await sendOtp(mobile);
                   if (response.status === true) {
                         res.status(201).json(
-                              `otp send successfully at to change password ${mobile}`,
+                              `otp send successfully at to change password ${mobile}`
                         );
                   } else {
                         res.status(500).json(
-                              `otp failed for network error   at ${mobile} contact developer`,
+                              `otp failed for network error   at ${mobile} contact developer`
                         );
                   }
             } else {
                   res.status(400).json(
-                        `there is no user with mobile number${mobile}`,
+                        `there is no user with mobile number${mobile}`
                   );
             }
       } catch (error) {
@@ -240,7 +240,7 @@ const changePassword = async (req, res) => {
                   return res
                         .status(400)
                         .send(
-                              "invalid at userId,  is no user with that userId or expired",
+                              "invalid at userId,  is no user with that userId or expired"
                         );
             const token = await Token.findOne({
                   userId: userId,
